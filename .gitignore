@@ -1,0 +1,38 @@
+# Kredensial — JANGAN pernah di-commit
+.env
+.env.*.bak
+.env.bak_*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Model & cache
+*.cache/
+
+# Backup & draft file
+*.bak
+*.bak_*
+*.orig
+*~
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Konfigurasi agent lokal
+.kilo/
+
+# Log
+*.log
+
+# PDF unduhan (bisa diunduh ulang dari JDIH)
+data/raw/*.pdf
+
+# Skrip sementara verifikasi (jangan dipublikasikan)
+scripts/_*tmp.py

@@ -1,0 +1,20 @@
+# Tema Elektra RAG — gaya Vercel: monokrom ink-on-canvas, satu aksen (ink),
+# tipografi Geist (dimuat via @import di app.py; di sini kita kunci font family).
+
+[theme]
+base = "light"
+primaryColor = "#0a0a0a"          # ink — tombol & aksen
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#fafafa"
+textColor = "#171717"
+font = "sans serif"
+codeFont = "monospace"
+# Font Geist dimuat via CSS @import di app.py (bukan lewat theme key).
+linkColor = "#0a0a0a"
+baseFontSize = 16
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false

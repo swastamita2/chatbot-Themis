@@ -1,0 +1,17 @@
+# Daftar URL Regulasi Ketenagalistrikan - JDIH Kementerian ESDM
+# Format: Satu URL per baris. Baris yang diawali # diabaikan.
+# Gunakan format URL kanonik JDIH: https://jdih.esdm.go.id/dokumen/view?id=<ID>
+# (format lama /index.php/web/result/<ID>/detail adalah halaman JS yang
+#  kontennya tidak dirender server-side dan ID-nya tidak sesuai dokumen).
+
+# Permen ESDM No. 11 Tahun 2021 tentang Pelaksanaan Usaha Ketenagalistrikan
+https://jdih.esdm.go.id/dokumen/view?id=2175
+
+# Permen ESDM No. 12 Tahun 2021 tentang Klasifikasi, Kualifikasi, Akreditasi, dan Sertifikasi Usaha Jasa Penunjang Tenaga Listrik
+https://jdih.esdm.go.id/dokumen/view?id=2181
+
+# Permen ESDM No. 7 Tahun 2024 tentang Tarif Tenaga Listrik yang Disediakan oleh PT PLN (Persero) — menggantikan Permen 28/2016
+https://jdih.esdm.go.id/dokumen/view?id=2456
+
+# Permen ESDM No. 2 Tahun 2024 tentang PLTS Atap yang Terhubung pada Jaringan Tenaga Listrik Pemegang Izin Usaha untuk Kepentingan Umum
+https://jdih.esdm.go.id/dokumen/view?id=2428

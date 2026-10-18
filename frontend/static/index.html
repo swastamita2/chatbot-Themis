@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Themis RAG</title>
+  <meta name="description" content="Chatbot RAG untuk regulasi pasar modal Indonesia (POJK OJK & Peraturan Bursa Efek Indonesia), dengan rujukan pasal dari dokumen resmi." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a855f7' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v18M8 21h8'/%3E%3Cpath d='M5 7h14'/%3E%3Cpath d='M5 7L3 12h4L5 7zM19 7l-2 5h4l-2-5z'/%3E%3Cpath d='M3 12a2 2 0 0 0 4 0M17 12a2 2 0 0 0 4 0'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <!-- Icon set: custom minimal 24-grid stroke (1.6px, round caps). Dibatasi
+       satu set agar konsisten; setiap glyph dipilih karena relevan dengan
+       kontrolnya (bukan impor library stock). -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L5 13h6l-1 9 8-11h-6z"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M8 21h8M5 7h14M5 7L3 12h4L5 7zM19 7l-2 5h4l-2-5zM3 12a2 2 0 0 0 4 0M17 12a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L4 20l1-4.6A8.5 8.5 0 1 1 21 11.5z"/></symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24"><path d="M4 4h16v5H4zM6 9v11h12V9M10 13h4"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5c-2-1.5-5-1.5-8 0v14c3-1.5 6-1.5 8 0 2-1.5 5-1.5 8 0V5c-3-1.5-6-1.5-8 0v14"/></symbol>
+    <symbol id="i-grid-plus" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM17.5 14v7M14 17.5h7"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM3 17l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.5"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><path d="M3 4h18v12H3zM9 20h6M12 16v4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 12a7.4 7.4 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7.3 7.3 0 0 0-2-1.2L14.7 3h-4l-.3 2.7a7.3 7.3 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7.4 7.4 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7.3 7.3 0 0 0 2 1.2l.3 2.7h4l.3-2.7a7.3 7.3 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.06-.4.1-.8.1-1.2z"/></symbol>
+    <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 16V4M7.5 8.5L12 4l4.5 4.5M5 14v6h14v-6"/></symbol>
+    <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M8.5 12.5l5.5-5.5a3 3 0 0 1 4.2 4.2l-7 7a5 5 0 0 1-7-7l4.2-4.2"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M3 6h9M21 6h.5M3 12h4M13 12h8M3 18h13M21 18h.5"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2c.5 5 1.5 6.5 10 10-8.5 3.5-9.5 5-10 10-.5-5-1.5-6.5-10-10 8.5-3.5 9.5-5 10-10z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.7.7-1 1.2-1 2.5h-6c0-1.3-.3-1.8-1-2.5A6 6 0 0 1 12 3z"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M8 4h8v3H8zM8 5H6v15h12V5h-2M9 12h6M9 16h4"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7.5 10.5L12 15l4.5-4.5M5 20h14"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><path d="M9 9h11v11H9zM5 15H4V4h11v1"/></symbol>
+  </svg>
+  <div class="app">
+    <!-- ══════════ Sidebar kiri (onyx) ══════════ -->
+    <aside class="sidebar">
+      <div class="sb-head">
+        <span class="logo"><svg class="ic"><use href="#i-scale"/></svg></span>
+        <span class="brand">Themis RAG<small>Riset regulasi pasar modal</small></span>
+      </div>
+
+      <button class="new-chat" id="btnNewChat" type="button">
+        <svg class="ic"><use href="#i-plus"/></svg> New Chat
+      </button>
+
+      <div class="sb-body">
+      <div class="sb-label">Features</div>
+      <nav class="sb-nav" aria-label="Features">
+        <a class="nav-item active" href="#" data-nav="chat" id="navChat">
+          <svg class="ic"><use href="#i-message"/></svg> Chat
+        </a>
+        <a class="nav-item" href="#" data-nav="archived" id="navArchived">
+          <svg class="ic"><use href="#i-archive"/></svg> Archived
+          <span class="soon">soon</span>
+        </a>
+        <a class="nav-item" href="#" data-nav="library" id="navLibrary">
+          <svg class="ic"><use href="#i-book"/></svg> Library
+        </a>
+      </nav>
+
+      <div class="sb-label">Workspaces</div>
+      <nav class="sb-nav" aria-label="Workspaces">
+        <a class="nav-item" href="#" data-nav="ws" id="wsProject">
+          <svg class="ic"><use href="#i-grid-plus"/></svg> New Project
+          <span class="soon">soon</span>
+        </a>
+        <a class="nav-item" href="#" data-nav="ws" id="wsImage">
+          <svg class="ic"><use href="#i-image"/></svg> Image
+          <span class="soon">soon</span>
+        </a>
+        <a class="nav-item" href="#" data-nav="ws" id="wsPresent">
+          <svg class="ic"><use href="#i-monitor"/></svg> Presentation
+          <span class="soon">soon</span>
+        </a>
+        <a class="nav-item" href="#" data-nav="ws" id="wsCode">
+          <svg class="ic"><use href="#i-code"/></svg> Dev Code
+          <span class="soon">soon</span>
+        </a>
+        <a class="nav-item" href="#" data-nav="ws" id="wsArchive">
+          <svg class="ic"><use href="#i-archive"/></svg> Archive
+          <span class="soon">soon</span>
+        </a>
+      </nav>
+      </div><!-- /sb-body -->
+
+      <div class="upgrade">
+        <div class="tile"><svg class="ic"><use href="#i-spark"/></svg></div>
+        <h4>Upgrade to premium</h4>
+        <p>Akses korpus tambahan & model prioritas untuk tim riset.</p>
+        <button class="upgrade-btn" id="btnUpgrade" type="button">Upgrade</button>
+        <span class="soon-tag">Coming soon — belum tersedia</span>
+      </div>
+    </aside>
+
+    <!-- ══════════ Area utama ══════════ -->
+    <main class="main">
+      <div class="topbar">
+        <div class="model-select">
+          <span class="ms-dot" id="modelDot" aria-hidden="true"></span>
+          <select id="modelSelect" aria-label="Pilih model LLM">
+            <option value="">Memuat model&hellip;</option>
+          </select>
+          <span class="chev"><svg class="ic"><use href="#i-chev"/></svg></span>
+        </div>
+        <div class="top-actions">
+          <button class="pill-btn" id="btnConfig" type="button" title="Status sistem & ingest">
+            <svg class="ic"><use href="#i-gear"/></svg><span>Configuration</span>
+          </button>
+          <button class="pill-btn" id="btnExport" type="button" title="Ekspor percakapan">
+            <svg class="ic"><use href="#i-export"/></svg><span>Export</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stage: empty state / daftar pesan -->
+      <section class="stage" id="stage">
+        <div class="empty-wrap" id="emptyWrap">
+          <div class="orb" aria-hidden="true"></div>
+          <h1 class="headline">Ready to Create Something New?</h1>
+          <div class="capsules">
+            <button class="capsule" data-fill="Buat gambar ilustrasi tentang " type="button">
+              <svg class="ic"><use href="#i-image"/></svg> Create Image
+            </button>
+            <button class="capsule" data-fill="Bantu saya brainstorm ide tentang " type="button">
+              <svg class="ic"><use href="#i-bulb"/></svg> Brainstorm
+            </button>
+            <button class="capsule" data-fill="Buatkan rencana langkah untuk " type="button">
+              <svg class="ic"><use href="#i-clipboard"/></svg> Make a plan
+            </button>
+          </div>
+        </div>
+        <div class="msgs" id="msgs" hidden></div>
+      </section>
+      <!-- Dock: composer + kartu fitur -->
+      <div class="dock">
+        <div class="dock-inner">
+          <div class="composer">
+            <div class="composer-top">
+              <svg class="ic spark" aria-hidden="true"><use href="#i-spark"/></svg>
+              <textarea id="chatInput" rows="1"
+                placeholder="Ask Anything&hellip;"
+                aria-label="Pertanyaan untuk Themis RAG"></textarea>
+            </div>
+            <div class="composer-bar">
+              <button class="mini-btn" id="btnAttach" type="button" title="Lampiran (segera hadir)">
+                <svg class="ic"><use href="#i-paperclip"/></svg><span>Attach</span><span class="soon">soon</span>
+              </button>
+              <button class="mini-btn" id="btnSettings" type="button">
+                <svg class="ic"><use href="#i-sliders"/></svg><span>Settings</span>
+              </button>
+              <button class="mini-btn" id="btnOptions" type="button" title="Opsi (segera hadir)">
+                <svg class="ic"><use href="#i-grid"/></svg><span>Options</span><span class="soon">soon</span>
+              </button>
+              <div class="composer-right">
+                <button class="icon-circle" id="btnMic" type="button" title="Input suara (segera hadir)">
+                  <svg class="ic"><use href="#i-mic"/></svg>
+                </button>
+                <button class="send-btn" id="btnSend" type="button" title="Kirim" disabled>
+                  <svg class="ic"><use href="#i-arrow-up"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tiga kartu fitur horizontal -->
+          <div class="cards">
+            <div class="card">
+              <div class="card-top">
+                <span class="card-icon"><svg class="ic"><use href="#i-image"/></svg></span>
+                <span class="card-tag">soon</span>
+              </div>
+              <h5>Image Generator</h5>
+              <p>Ubah jawaban RAG menjadi diagram ilustratif.</p>
+              <button class="mini-cta" data-soon type="button">Open
+                <svg class="ic"><use href="#i-arrow-up"/></svg></button>
+            </div>
+            <div class="card">
+              <div class="card-top">
+                <span class="card-icon"><svg class="ic"><use href="#i-monitor"/></svg></span>
+                <span class="card-tag">soon</span>
+              </div>
+              <h5>AI Presentation</h5>
+              <p>Rangkum temuan menjadi slide presentasi.</p>
+              <button class="mini-cta" data-soon type="button">Open
+                <svg class="ic"><use href="#i-arrow-up"/></svg></button>
+            </div>
+            <div class="card">
+              <div class="card-top">
+                <span class="card-icon"><svg class="ic"><use href="#i-code"/></svg></span>
+                <span class="card-tag">soon</span>
+              </div>
+              <h5>Dev Assistant</h5>
+              <p>Bantuan integrasi & kode untuk developer.</p>
+              <button class="mini-cta" data-soon type="button">Open
+                <svg class="ic"><use href="#i-arrow-up"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <!-- ══════════ Panel: Configuration (status sistem + ingest) ══════════ -->
+  <div class="overlay" id="overlayConfig" role="dialog" aria-modal="true" aria-labelledby="cfgTitle">
+    <div class="panel">
+      <div class="row-between">
+        <h3 id="cfgTitle"><svg class="ic"><use href="#i-gear"/></svg> Configuration</h3>
+        <button class="icon-circle" id="closeConfig" type="button" aria-label="Tutup">
+          <svg class="ic"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <p class="sub">Status sistem &amp; pengaturan. Data diperbarui otomatis dari backend.</p>
+
+      <div class="sb-label" style="margin-top:4px">Status sistem</div>
+      <div class="status-rows" id="statusRows">
+        <div class="status-row"><span class="s-dot"></span>
+          <span class="s-name">Milvus</span>
+          <span class="s-msg">memeriksa&hellip;</span></div>
+        <div class="status-row"><span class="s-dot"></span>
+          <span class="s-name">LLM</span>
+          <span class="s-msg">memeriksa&hellip;</span></div>
+      </div>
+
+      <div class="sb-label">Parameter pencarian</div>
+      <div class="field">
+        <label for="topk">Top-k (jumlah sumber yang diambil)</label>
+        <select id="topk">
+          <option value="3">3 sumber</option>
+          <option value="5" selected>5 sumber</option>
+          <option value="7">7 sumber</option>
+          <option value="10">10 sumber</option>
+        </select>
+      </div>
+
+      <hr class="app-header-rule" />
+      <div class="sb-label" style="margin-top:4px">Ingest regulasi baru</div>
+      <div class="field">
+        <label for="ingestUrl">URL JDIH OJK / IDX</label>
+        <input type="url" id="ingestUrl"
+          placeholder="https://www.ojk.go.id/...  atau  https://www.idx.co.id/..." />
+      </div>
+      <div class="row-between">
+        <span class="sub" id="ingestMsg" style="margin:0"></span>
+        <button class="primary-btn" id="btnIngest" type="button">
+          <svg class="ic"><use href="#i-download"/></svg> Mulai Ingest Dokumen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ Panel: Export percakapan ══════════ -->
+  <div class="overlay" id="overlayExport" role="dialog" aria-modal="true" aria-labelledby="expTitle">
+    <div class="panel">
+      <div class="row-between">
+        <h3 id="expTitle"><svg class="ic"><use href="#i-export"/></svg> Export Percakapan</h3>
+        <button class="icon-circle" id="closeExport" type="button" aria-label="Tutup">
+          <svg class="ic"><use href="#i-close"/></svg>
+        </button>
+      </div>
+      <p class="sub">Simpan percakapan aktif sebagai berkas Markdown, termasuk rujukan pasal.</p>
+      <div class="row-between" style="margin-top:8px">
+        <button class="ghost-btn" id="btnCopyMd" type="button">
+          <svg class="ic"><use href="#i-copy"/></svg> Salin ke clipboard
+        </button>
+        <button class="primary-btn" id="btnDownloadMd" type="button">
+          <svg class="ic"><use href="#i-download"/></svg> Unduh .md
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
