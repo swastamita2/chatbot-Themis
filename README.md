@@ -345,6 +345,6 @@ Kontribusi yang dicari: penambahan kanal alerting, dukungan model LLM baru (tamb
 Lisensi: [MIT](LICENSE).
 
 > [!WARNING]
-> Jangan men-share file `.env` di luar repo ini, isinya kredensial aktif.
+> File `.env` tidak disertakan di repo (sudah di-gitignore), karena isinya kredensial aktif: API key LLM, password Milvus, token bot, dan sebagainya. Jangan pernah commit, attach, atau membagikan file `.env` ke mana pun. Salin `.env.example` ke `.env` lalu isi nilainya sendiri.
 
 Proyek ini dikembangkan sebagai portofolio pribadi dan independen dari PT PLN Icon Plus.
