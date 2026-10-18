@@ -36,3 +36,7 @@ data/raw/*.pdf
 
 # Skrip sementara verifikasi (jangan dipublikasikan)
 scripts/_*tmp.py
+
+# Output skrip verifikasi
+scripts/_fingerprint_out.json
+scripts/_smoke_out.txt
